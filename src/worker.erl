@@ -4,7 +4,8 @@
 start_link() -> {ok, spawn_link(fun run/0)}.
 
 run() ->
-  run("./worker.pl", 5000).
+  %run("./worker.pl", 5000).
+  run("./worker.js", 5000).
 
 run (Cmd, Timeout) ->
   Port = erlang:open_port({spawn_executable, Cmd}, [exit_status]),

@@ -2,12 +2,10 @@
 use strict;
 use warnings;
 
-
 sub PIPE_handler {
   exit(0);
 }
 $SIG{'PIPE'} = 'PIPE_handler';
-
 
 $| = 1;
 my $timeout = 1;
