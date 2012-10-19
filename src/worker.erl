@@ -1,7 +1,7 @@
 -module(worker).
 -export([start_link/0]).
 
-start_link() -> spawn_link(fun run/0).
+start_link() -> {ok, spawn_link(fun run/0)}.
 
 run() ->
   run("./worker.pl", 5000).
@@ -22,15 +22,7 @@ loop(Port, OldStream, Timeout) ->
           loop(Port, AdjStream, Timeout);
         false ->
           loop(Port, AdjStream, Timeout)
-      end;
-    {'EXIT', From, Type} ->
-      erlang:display({'EXIT', From, Type}),
-      port_close(Port),
-      %% FIXME, use pid instead
-      Cmd = 'killall perl',
-      erlang:open_port({spawn_executable, Cmd}, [exit_status]);
-    Other ->
-      erlang:display(Other)
+      end
   after Timeout ->
     throw(timeout)
   end.
