@@ -9,7 +9,8 @@ run() ->
 
 run (Cmd, Timeout) ->
   Port = erlang:open_port({spawn_executable, Cmd}, [exit_status]),
-  erlang:display({pinfo, erlang:port_info(Port)}),
+  [_,_,_,_,_,_,{os_pid,Pid}] = erlang:port_info(Port),
+  erlang:display("worker starter as pid #" ++ integer_to_list(Pid)),
   loop(Port, "", Timeout).
 
 loop(Port, OldStream, Timeout) ->
