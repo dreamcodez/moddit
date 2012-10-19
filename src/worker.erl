@@ -1,5 +1,7 @@
 -module(worker).
--export([run/0]).
+-export([start_link/0]).
+
+start_link() -> spawn_link(fun run/0).
 
 run() ->
   run("./worker.pl", 5000).
@@ -16,7 +18,7 @@ loop(Port, OldStream, Timeout) ->
       {Messages, AdjStream} = parse_netstrings(Stream),
       case length(Messages) > 0 of
         true ->
-          %erlang:display({messages, Messages}),
+          erlang:display({messages, Messages}),
           loop(Port, AdjStream, Timeout);
         false ->
           loop(Port, AdjStream, Timeout)
@@ -26,9 +28,9 @@ loop(Port, OldStream, Timeout) ->
       port_close(Port),
       %% FIXME, use pid instead
       Cmd = 'killall perl',
-      erlang:open_port({spawn_executable, Cmd}, [exit_status])
-    %Other ->
-      %erlang:display(Other)
+      erlang:open_port({spawn_executable, Cmd}, [exit_status]);
+    Other ->
+      erlang:display(Other)
   after Timeout ->
     throw(timeout)
   end.

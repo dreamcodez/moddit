@@ -21,6 +21,6 @@ start_link() ->
 %% ===================================================================
 
 init([]) ->
-  Worker1 = {worker1, {worker, run, []}, permanent, 5000, worker, [worker]},
-  {ok, { {one_for_one, 5, 10}, [Worker1]} }.
+  Worker1 = {worker1, {worker, start_link, []}, permanent, 5000, worker, [worker]},
+  {ok, {{one_for_one, 5, 10}, [Worker1]}}.
 
