@@ -1,0 +1,5 @@
+#!/bin/sh -e
+
+rebar compile
+erl -pa ebin -noshell -s worker start_link
+

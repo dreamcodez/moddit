@@ -72,7 +72,6 @@ function handle_stdin(chunk) {
   var res = parse_netstrings(chunk.toString());
   var frames = res[0];
   var newbuf = res[1];
-  console.warn({frames: frames});
   frames.map(handle_frame);
 
   // ready for next invocation
@@ -86,5 +85,6 @@ process.stdin.on('data', handle_stdin)
 
 process.openStdin();
 
-//setInterval(function(){ process.stdout.write('3:foo'); }, 2000);
+// heartbeat
+setInterval(function(){ process.stdout.write('2:hb'); }, 8000);
 
