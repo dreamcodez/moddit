@@ -21,6 +21,7 @@ loop(Port, OldStream, Timeout) ->
       case length(Messages) > 0 of
         true ->
           erlang:display({messages, Messages}),
+          port_command(Port, "3:ack"),
           loop(Port, AdjStream, Timeout);
         false ->
           loop(Port, AdjStream, Timeout)
