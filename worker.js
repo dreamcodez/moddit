@@ -52,6 +52,9 @@ var commands = {
       if(err) {
         send(jobid, 1, err.stack);
       }
+      else if(!css) {
+        send(jobid, 1, (new Error('empty stylus response')).stack);
+      }
       else {
         send(jobid, 0, css);
       }

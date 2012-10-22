@@ -2,3 +2,4 @@
 /perl.out
 /.vagrant
 /erl_crash.dump
+*.beam
