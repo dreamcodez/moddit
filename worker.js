@@ -1,10 +1,12 @@
 #!/usr/local/bin/node
 
+var async  = require('async');
 var stylus = require('stylus');
 
 function send(jobid, errcode, msg) {
   var frame = jobid + ' ' + errcode + ' ' + msg;
-  console.log(frame.length + ':' + frame);
+  //console.log(frame.length + ':' + frame);
+  process.stdout.write(frame.length + ':' + frame);
 }
 
 function shutdown_on_epipe(err) {
@@ -47,7 +49,7 @@ function parse_job(frame) {
 }
 
 var commands = {
-  stylus: function(jobid, job) {
+  stylus: function(jobid, job, cb) {
     stylus.render(job.input, function(err, css) {
       if(err) {
         send(jobid, 1, err.stack);
@@ -58,27 +60,47 @@ var commands = {
       else {
         send(jobid, 0, css);
       }
+      cb()
     });
   }
 };
 
-function handle_frame(frame) {
+function handle_frame(frame, cb) {
   var res = parse_job(frame);
   var jobid = res[0];
   var job = res[1];
   var command = commands[job.command];
-  command(jobid, job);
+  command(jobid, job, cb);
 }
 
 var _buf = "";
+var _queue = [];
+
 function handle_stdin(chunk) {
   var res = parse_netstrings(chunk.toString());
   var frames = res[0];
   var newbuf = res[1];
-  frames.map(handle_frame);
+
+  _queue = _queue.concat(frames);
 
   // ready for next invocation
   _buf = newbuf;
+}
+
+function handleFrameLoop() {
+  function next() {
+    //setTimeout(handleFrameLoop, 10);
+    process.nextTick(handleFrameLoop);
+  }
+
+  var frame = _queue.shift();
+
+  if(frame) {
+    handle_frame(frame, next);
+  }
+  else {
+    next();
+  }
 }
 
 process.stdout.on('error', shutdown_on_epipe);
@@ -90,4 +112,6 @@ process.openStdin();
 
 // heartbeat
 setInterval(function(){ process.stdout.write('2:hb'); }, 8000);
+
+handleFrameLoop()
 

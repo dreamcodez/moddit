@@ -2,7 +2,7 @@
 -export([start/0]).
 
 start() ->
-  loop(1000).
+  loop(10).
 
 loop(Times) when Times >= 0 ->
   case Times > 0 of
