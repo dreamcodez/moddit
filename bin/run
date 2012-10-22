@@ -1,5 +1,6 @@
 #!/bin/sh -e
 
 rebar compile
-erl -pa ebin -noshell -sname worker -s worker start_link
+#erl -noshell -pa ebin -sname worker -s myapp_app start
+erl -noshell -pa ebin -sname worker -s worker start_link
 

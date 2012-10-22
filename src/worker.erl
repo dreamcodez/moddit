@@ -31,6 +31,8 @@ loop(Port, OldStream, Timeout) ->
       end;
     {Port, {exit_status, _}} ->
       throw(worker_exit);
+    shutdown ->
+      throw(shutdown);
     Other ->
       erlang:display(Other)
   after Timeout ->
