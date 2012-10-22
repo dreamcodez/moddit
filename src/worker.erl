@@ -1,7 +1,10 @@
 -module(worker).
 -export([start_link/0]).
 
-start_link() -> {ok, spawn_link(fun run/0)}.
+start_link() ->
+  Pid = spawn_link(fun run/0),
+  true = register(worker, Pid),
+  {ok, Pid}.
 
 run() ->
   %run("./worker.pl", 5000).

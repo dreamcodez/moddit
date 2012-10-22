@@ -1,5 +1,5 @@
 #!/bin/sh -e
 
 rebar compile
-erl -pa ebin -noshell -s worker start_link
+erl -pa ebin -noshell -sname worker -s worker start_link
 
