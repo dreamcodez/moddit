@@ -60,7 +60,7 @@ var commands = {
       else {
         send(jobid, 0, css);
       }
-      cb()
+      cb();
     });
   }
 };
@@ -93,14 +93,11 @@ function handleFrameLoop() {
     process.nextTick(handleFrameLoop);
   }
 
-  var frame = _queue.shift();
+  // process 4 at a time before yielding to scheduler
+  var frames = _queue.slice(0, 4);
+  _queue = _queue.slice(4);
 
-  if(frame) {
-    handle_frame(frame, next);
-  }
-  else {
-    next();
-  }
+  async.forEach(frames, handle_frame, next);
 }
 
 process.stdout.on('error', shutdown_on_epipe);
