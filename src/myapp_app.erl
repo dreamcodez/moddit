@@ -9,10 +9,12 @@
 %% Application callbacks
 %% ===================================================================
 
+start() ->
+  myapp_sup:start_link().
+
 start(_StartType, _StartArgs) ->
-    erlang:display("myapp started"),
-    myapp_sup:start_link().
+  start().
 
 stop(_State) ->
-    ok.
+  ok.
 
