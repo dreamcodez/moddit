@@ -8,10 +8,12 @@ start() ->
 loop(Times) when Times >= 0 ->
   case Times > 0 of
     true ->
-      {worker, 'worker@precise64'} ! {self(), job_request, "{\"command\": \"stylus\", \"input\": \".foo\\n  color blue\"}"},
+      {ok, Output} = worker:do_job(
+        {worker, 'worker@precise64'},
+        "{\"command\": \"stylus\", \"input\": \".foo\\n  color blue\"}"),
+      erlang:display(Output),
       loop(Times - 1);
     false ->
-      %done
       receive
         Other ->
           erlang:display(Other),

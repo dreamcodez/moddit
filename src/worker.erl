@@ -1,5 +1,5 @@
 -module(worker).
--export([start_link/0, do_job/1]).
+-export([start_link/0, do_job/2]).
 
 start_link() ->
   Pid = spawn_link(fun run/0),
@@ -28,8 +28,14 @@ parse_response_frame(Frame) ->
       {JobId, ErrCode, Msg}
   end.
 
-do_job(_JobRequest) ->
-  stub.
+do_job(Worker, JobRequest) ->
+  Worker ! {self(), job_request, JobRequest},
+  receive
+    {_WorkerPid, job_response, JobResponse} ->
+      {ok, JobResponse};
+    {_WorkerPid, job_error, JobError} ->
+      {error, JobError}
+  end.
 
 loop(Port, Stream, Timeout, JobId) when is_port(Port) ->
   receive
