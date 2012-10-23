@@ -3,3 +3,4 @@
 /.vagrant
 /erl_crash.dump
 *.beam
+*.swp
