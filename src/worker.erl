@@ -14,11 +14,6 @@ run(Cmd, Timeout) ->
   Port = erlang:open_port({spawn_executable, Cmd}, [exit_status]),
   [_,_,_,_,_,_,{os_pid,Pid}] = erlang:port_info(Port),
   erlang:display("worker starter as pid #" ++ integer_to_list(Pid)),
-  EncodedJSON = lists:flatten(jsonerl:encode({{command, stylus}, {input, <<".foo\n  color blue">>}})),
-  Frame = "2 " ++ EncodedJSON,
-  Msg = integer_to_list(length(Frame)) ++ ":" ++ Frame,
-  erlang:display(Msg),
-  true = port_command(Port, Msg),
   loop(Port, "", Timeout, 1).
 
 parse_response_frame(Frame) ->
@@ -44,9 +39,18 @@ loop(Port, Stream, Timeout, JobId) when is_port(Port) ->
         true ->
           % process table for jobid -> pid mapping
           HandleMessage =
-            fun(Msg) ->
-              JobRes = parse_response_frame(Msg),
-              erlang:display(JobRes)
+            fun(Frame) ->
+              case parse_response_frame(Frame) of
+                heartbeat -> do_nothing;
+                {MsgJobId, ErrCode, Msg} ->
+                  Pid = erase({pid_by_jobid, MsgJobId}),
+                  case ErrCode of
+                    0 ->
+                      Pid ! {self(), job_response, Msg};
+                    _ ->
+                      Pid ! {self(), job_error, Msg}
+                  end
+              end
             end,
           lists:map(HandleMessage, Messages),
           loop(Port, AdjStream, Timeout, JobId);
@@ -56,6 +60,7 @@ loop(Port, Stream, Timeout, JobId) when is_port(Port) ->
     {Port, {exit_status, _}} ->
       throw(worker_exit);
     {Pid, job_request, Msg} when is_pid(Pid) ->
+      undefined = put({pid_by_jobid , JobId}, Pid),
       Frame = integer_to_list(JobId) ++ " " ++ Msg,
       NetString = integer_to_list(length(Frame)) ++ ":" ++ Frame,
       true = port_command(Port, NetString),

@@ -11,6 +11,13 @@ loop(Times) when Times >= 0 ->
       {worker, 'worker@precise64'} ! {self(), job_request, "{\"command\": \"stylus\", \"input\": \".foo\\n  color blue\"}"},
       loop(Times - 1);
     false ->
-      done
+      %done
+      receive
+        Other ->
+          erlang:display(Other),
+          loop(0)
+      after 10000 ->
+        done
+      end
   end.
 

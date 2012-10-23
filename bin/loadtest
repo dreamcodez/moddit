@@ -2,5 +2,5 @@
 
 rebar compile
 
-erl -noshell -pa ebin -sname control -s loadtest start
+erl -noshell -pa ebin -sname control -s loadtest start -s erlang halt
 
