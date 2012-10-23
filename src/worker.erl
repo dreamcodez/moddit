@@ -14,7 +14,11 @@ run(Cmd, Timeout) ->
   Port = erlang:open_port({spawn_executable, Cmd}, [exit_status]),
   [_,_,_,_,_,_,{os_pid,Pid}] = erlang:port_info(Port),
   erlang:display("worker starter as pid #" ++ integer_to_list(Pid)),
-  true = port_command(Port, "56:2 {\"command\": \"stylus\", \"input\": \"#foo { color: blue }\"}"),
+  EncodedJSON = lists:flatten(jsonerl:encode({{command, stylus}, {input, <<".foo\n  color blue">>}})),
+  Frame = "2 " ++ EncodedJSON,
+  Msg = integer_to_list(length(Frame)) ++ ":" ++ Frame,
+  erlang:display(Msg),
+  true = port_command(Port, Msg),
   loop(Port, "", Timeout, 1).
 
 parse_response_frame(Frame) ->
@@ -29,7 +33,7 @@ parse_response_frame(Frame) ->
       {JobId, ErrCode, Msg}
   end.
 
-do_job(JobRequest) ->
+do_job(_JobRequest) ->
   stub.
 
 loop(Port, Stream, Timeout, JobId) when is_port(Port) ->
