@@ -12,6 +12,8 @@ out(A) ->
   JobRequest = lists:flatten(jsonerl:encode(JobSpec)),
   {ok, CSS} = worker:do_job({worker, 'worker@precise64'}, JobRequest),
   ETag = bin_to_hexstr(crypto:hash(sha, CSS)),
-  RespHeaders = [{header, "ETag: " ++ ETag}],
+  RespHeaders = [{header, "ETag: " ++ ETag}
+                ,{header, "Cache-Control: max-age=30"}
+                ],
   [{allheaders, RespHeaders}, {content, "text/css", CSS}].
 
