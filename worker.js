@@ -75,6 +75,22 @@ function handle_frame(frame, cb) {
 
 var _buf = "";
 var _queue = [];
+function handleQueueLoop() {
+  function next() {
+    process.nextTick(handleQueueLoop);
+  }
+
+  // process 4 at a time before yielding to scheduler
+  var frames = _queue.slice(0, 4);
+  _queue = _queue.slice(4);
+
+  if(_queue.length) {
+    async.forEach(frames, handle_frame, next);
+  }
+  else {
+    async.forEach(frames, handle_frame);
+  }
+}
 
 function handle_stdin(chunk) {
   var res = parse_netstrings(chunk.toString());
@@ -85,19 +101,8 @@ function handle_stdin(chunk) {
 
   // ready for next invocation
   _buf = newbuf;
-}
 
-function handleFrameLoop() {
-  function next() {
-    //setTimeout(handleFrameLoop, 10);
-    process.nextTick(handleFrameLoop);
-  }
-
-  // process 4 at a time before yielding to scheduler
-  var frames = _queue.slice(0, 4);
-  _queue = _queue.slice(4);
-
-  async.forEach(frames, handle_frame, next);
+  process.nextTick(handleQueueLoop);
 }
 
 process.stdout.on('error', shutdown_on_epipe);
@@ -109,6 +114,4 @@ process.openStdin();
 
 // heartbeat
 setInterval(function(){ process.stdout.write('2:hb'); }, 8000);
-
-handleFrameLoop()
 
