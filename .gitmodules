@@ -1,0 +1,3 @@
+[submodule "jsonerl"]
+	path = jsonerl
+	url = git@github.com:dreamcodez/jsonerl.git
