@@ -1,7 +1,6 @@
 #!/bin/sh -e
 
 rebar compile
-#erl -noshell -pa ebin -sname worker -s myapp_app start
+erl -noshell -pa ebin -pa jsonerl/ebin -sname worker -s myapp_app shell
 #erl -noshell -pa ebin -pa jsonerl/ebin -sname worker -s worker start_link
-erl -noshell -pa ebin -pa jsonerl/ebin -sname worker -s worker start_link
 
