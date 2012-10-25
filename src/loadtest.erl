@@ -2,7 +2,11 @@
 -export([start/0]).
 
 start() ->
-  loop(800).
+  spawn(fun() -> loop(100) end),
+  spawn(fun() -> loop(100) end),
+  spawn(fun() -> loop(100) end),
+  spawn(fun() -> loop(100) end),
+  loop(1000).
   %loop(1).
 
 loop(Times) when Times >= 0 ->
