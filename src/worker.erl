@@ -1,14 +1,18 @@
 -module(worker).
--export([start_link/0, do_job/2]).
+-export([start_link/3, do_job/2]).
 
-start_link() ->
-  Pid = spawn_link(fun run/0),
-  true = register(worker, Pid),
+% worker should send heartbeats within the timeout window
+% the heartbeat frame the worker needs to send is '2:hb' or if you have
+% a routine which applies the netstring then just 'hb'
+% this is just a liveness test
+%
+% if this  erlang process dies then the underlying os process wil get a sigpipe
+% so the worker needs to handle sigpipe to gracefully die
+start_link(RegisterAs, Command, Timeout) when is_atom(RegisterAs) ->
+  StartWorker = fun() -> run(Command, Timeout) end,
+  Pid = spawn_link(StartWorker),
+  true = register(RegisterAs, Pid),
   {ok, Pid}.
-
-run() ->
-  %run("./worker.pl", 5000).
-  run("./worker.js", 16000).
 
 run(Cmd, Timeout) ->
   Port = erlang:open_port({spawn_executable, Cmd}, [exit_status]),

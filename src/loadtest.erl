@@ -20,7 +20,7 @@ loop(Times, Durations) when Times >= 0 ->
     true ->
       Before = now_micro(),
       {ok, Output} = worker:do_job(
-        {worker, 'worker@precise64'},
+        {worker1, 'worker@precise64'},
         "{\"command\": \"stylus\", \"input\": \".foo\\n  color blue\"}"),
       After = now_micro(),
       DurationMs = (After - Before) / 1000,

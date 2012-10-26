@@ -21,6 +21,6 @@ start_link() ->
 %% ===================================================================
 
 init([]) ->
-  Worker1 = {worker1, {worker, start_link, []}, permanent, 5000, worker, [worker]},
+  Worker1 = {worker1, {worker, start_link, [worker1, './worker.js', 16000]}, permanent, 5000, worker, [worker]},
   {ok, {{one_for_one, 5, 10}, [Worker1]}}.
 
