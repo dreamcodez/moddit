@@ -2,5 +2,5 @@
 
 rebar compile
 
-erl -noshell -pa ebin -sname control -s loadtest start -s erlang halt
+erl -noshell -pa ebin -pa /usr/local/lib/yaws/ebin -sname control -s loadtest start -s erlang halt
 

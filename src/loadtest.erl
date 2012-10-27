@@ -19,9 +19,9 @@ loop(Times, Durations) when Times >= 0 ->
   case Times > 0 of
     true ->
       Before = now_micro(),
-      {ok, Output} = worker:do_job(
-        {worker1, 'worker@precise64'},
-        "{\"command\": \"stylus\", \"input\": \".foo\\n  color blue\"}"),
+      JSONobj = {struct, [{"command", "stylus"}, {"input", ".foo\n  color blue"}]},
+      JSONmsg = lists:flatten(json2:encode(JSONobj)),
+      {ok, Output} = worker:do_job({worker1, 'worker@precise64'}, JSONmsg),
       After = now_micro(),
       DurationMs = (After - Before) / 1000,
       erlang:display({output, Output, jobtime_ms, DurationMs}),
