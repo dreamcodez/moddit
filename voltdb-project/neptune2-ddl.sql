@@ -27,7 +27,7 @@ CREATE TABLE posts (
 );
 
 CREATE TABLE pages (
-  uri VARCHAR(1000),
+  uri VARCHAR(1024),
   json VARCHAR(1048576)
 );
 
