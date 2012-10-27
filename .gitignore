@@ -2,5 +2,8 @@
 /perl.out
 /.vagrant
 /erl_crash.dump
+/voltdb-project/debugoutput/
+/voltdb-project/obj/
+/voltdb-project/catalog.jar
 *.beam
 *.swp

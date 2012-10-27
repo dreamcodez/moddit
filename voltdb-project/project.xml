@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<project>
+    <database name='database'>
+        <schemas>
+            <schema path='neptune2-ddl.sql' />
+        </schemas>
+        <!--
+        <procedures>
+            <procedure class='acmesoft.procedures.Insert' />
+            <procedure class='acmesoft.procedures.Delete' />
+            <procedure class='acmesoft.procedures.Select' />
+        </procedures>
+        <partitions>
+            <partition table='NEPTUNE2' column='NEPTUNE2_ID' />
+        </partitions>
+        -->
+    </database>
+</project>

@@ -12,6 +12,7 @@ end
 include_recipe 'erlang'
 include_recipe 'yaws'
 include_recipe 'nodejs'
+include_recipe 'voltdb'
 #include_recipe 'mongodb'
 
 # XXX this should perhaps go somewhere else, but for now, i like having this always
