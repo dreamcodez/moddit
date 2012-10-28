@@ -5,6 +5,8 @@ stylus = require 'stylus'
 wu     = require './worker-util'
 
 commands =
+  jade : (job, next) ->
+    jade.render(job.input, next)
   stylus : (job, next) ->
     stylus.render(job.input, next)
 
