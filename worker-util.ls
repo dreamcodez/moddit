@@ -5,27 +5,27 @@ parse-lenstr = (str) ->
     rest = str.slice(idx + 1)
     len = parseInt(str.slice(0, idx))
     {len, rest}
-  else
-    {rest: str}
 
 parse-netstring = (str) ->
-  {len, rest} = parse-lenstr(str)
-  if len
-    netstr = rest.slice(0, len)
-    newrest = rest.slice(len)
-    {netstr, rest: newrest}
-  else
-    {rest: str}
+  parsed = parse-lenstr str
+  if parsed
+    {len, rest} = parsed
+    if rest.length >= len
+      netstr = rest.slice(0, len)
+      newrest = rest.slice(len)
+      {netstr, rest: newrest}
 
 parse-netstrings = (str) ->
   rest = str
   netstrings = []
   loop
-    {netstr, rest} = parse-netstring(rest)
-    if netstr
-      netstrings.push(netstr)
-    else
+    parsed = parse-netstring rest
+    if parsed ~= null
       break
+    else
+      # reassigns the rest variable above
+      {netstr, rest} = parsed
+      netstrings.push(netstr)
 
   {netstrings, rest}
 
