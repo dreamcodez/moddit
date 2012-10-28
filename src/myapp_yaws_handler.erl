@@ -21,12 +21,26 @@ jade({Type, Target}) ->
 stylus({Type, Target}) ->
   render({"stylus", Type, Target}).
 
-out(_A) ->
-  {ok, CSS} = stylus({file, "styl/homepage.styl"}),
+etag_header(Str) ->
+  ETag = bin_to_hexstr(crypto:hash(sha, Str)),
+  {header, "ETag: " ++ ETag}.
+
+out(A) ->
+  Method = A#arg.req#http_request.method,
+  Path = A#arg.server_path,
+  Query = A#arg.querydata,
+  handle(Method, Path, Query).
+  
+handle('GET', "/", undefined) ->
   {ok, HTML} = jade({file, "jade/homepage.jade"}),
-  ETag = bin_to_hexstr(crypto:hash(sha, CSS)),
-  RespHeaders = [{header, "ETag: " ++ ETag}
-                ,{header, "Cache-Control: max-age=30"}
-                ],
-  [{allheaders, RespHeaders}, {content, "text/html", HTML}].
+  RespHeaders = [etag_header(HTML), {header, "Cache-Control: max-age=30"}],
+  [{allheaders, RespHeaders}, {content, "text/html", HTML}];
+
+handle('GET', "/homepage.css", undefined) ->
+  {ok, CSS} = stylus({file, "styl/homepage.styl"}),
+  RespHeaders = [etag_header(CSS), {header, "Cache-Control: max-age=30"}],
+  [{allheaders, RespHeaders}, {content, "text/css", CSS}];
+
+handle(_, _, _) ->
+  [{html, "404"}, {status, 404}].
 
