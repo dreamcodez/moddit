@@ -1,3 +1,3 @@
 
-global.bar = 1
+global.wu = require './worker-util'
 

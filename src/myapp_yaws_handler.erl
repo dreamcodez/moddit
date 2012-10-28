@@ -8,9 +8,9 @@ bin_to_hexstr(Bin) ->
     X <- binary_to_list(Bin)]).
 
 out(A) ->
-  JobSpec = {{command, stylus}, {input, <<".foo\n  color blue">>}},
-  JobRequest = lists:flatten(jsonerl:encode(JobSpec)),
-  {ok, CSS} = worker:do_job({worker, 'worker@precise64'}, JobRequest),
+  JobSpec = {struct, [{command, <<"stylus">>}, {input, <<".foo\n  color blue">>}]},
+  JobRequest = lists:flatten(json2:encode(JobSpec)),
+  {ok, CSS} = worker:do_job({worker1, 'worker@precise64'}, JobRequest),
   ETag = bin_to_hexstr(crypto:hash(sha, CSS)),
   RespHeaders = [{header, "ETag: " ++ ETag}
                 ,{header, "Cache-Control: max-age=30"}
