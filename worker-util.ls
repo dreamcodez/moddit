@@ -48,7 +48,7 @@ send = (jobid, errcode, msg) ->
   frame = "#{jobid} #{errcode} #{msg}"
   process.stdout.write(frame.length + ':' + frame)
 
-export init = (handle-job) ->
+export run = (handle-job) ->
   job-queue = []
 
   drain-queue = ->
@@ -79,4 +79,7 @@ export init = (handle-job) ->
   process.stdin.on \error, shutdown-on-epipe
   process.stdin.on \data, handle-stdin
   process.openStdin();
+
+  # heartbeat
+  setInterval (-> process.stdout.write('2:hb')), 8000
 
