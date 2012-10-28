@@ -27,8 +27,13 @@ CREATE TABLE posts (
 );
 
 CREATE TABLE pages (
-  uri  VARCHAR(1024),
-  json VARCHAR(1048576),
-  PRIMARY KEY (uri)
+  type    VARCHAR(64) NOT NULL,
+  slug    VARCHAR(256) NOT NULL,
+  json    VARCHAR(1048576) NOT NULL,
+  PRIMARY KEY (type, slug)
 );
+
+CREATE PROCEDURE get_page AS
+  SELECT json FROM pages
+  WHERE type = ? AND slug = ?;
 
