@@ -17,15 +17,6 @@ parse-netstring = (str) ->
   else
     {rest: str}
 
-parse-job = (frame) ->
-  idx = frame.index-of ' '
-  if idx is not -1
-    job = frame.slice(idx + 1)
-    jobid = parseInt(frame.slice(0, idx))
-    {jobid, job}
-  else
-    {}
-
 parse-netstrings = (str) ->
   rest = str
   netstrings = []
@@ -37,6 +28,13 @@ parse-netstrings = (str) ->
       break
 
   {netstrings, rest}
+
+parse-job = (frame) ->
+  idx = frame.index-of ' '
+  if idx is not -1
+    job = frame.slice(idx + 1)
+    jobid = parseInt(frame.slice(0, idx))
+    {jobid, job}
 
 shutdown-on-epipe = (err) ->
   if err.errno is \EPIPE
@@ -54,8 +52,9 @@ export run = (handle-job) ->
   drain-queue = ->
     if job-queue.length
       frame = job-queue.shift()
-      {jobid, job} = parse-job(frame)
-      if jobid and job
+      parsed = parse-job(frame)
+      if parsed
+        {jobid, job} = parsed
         handle-job job, (err, res) ->
           if err
             send jobid, 1, err

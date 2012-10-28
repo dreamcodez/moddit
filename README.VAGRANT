@@ -1,0 +1,8 @@
+
+* you must forward port 3000 and port 3001 (http and https respectively)
+  this is because virtualbox cannot bind to privileged ports
+
+  # on mac os x:
+  ipfw add fwd 127.0.0.1,3000 tcp from any to me dst-port 80
+  ipfw add fwd 127.0.0.1,3001 tcp from any to me dst-port 443
+
