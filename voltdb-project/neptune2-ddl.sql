@@ -19,15 +19,16 @@ CREATE TABLE comments (
 );
 
 CREATE TABLE posts ( 
-  id    BIGINT NOT NULL,
+  id      BIGINT NOT NULL,
   user_id BIGINT NOT NULL,
-  title VARCHAR(64) NOT NULL,
-  body  VARCHAR(1000) NOT NULL,
+  title   VARCHAR(64) NOT NULL,
+  body    VARCHAR(1000) NOT NULL,
   PRIMARY KEY (id)
 );
 
 CREATE TABLE pages (
-  uri VARCHAR(1024),
-  json VARCHAR(1048576)
+  uri  VARCHAR(1024),
+  json VARCHAR(1048576),
+  PRIMARY KEY (uri)
 );
 
