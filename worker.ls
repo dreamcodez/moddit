@@ -7,17 +7,29 @@ wu     = require './worker-util'
 
 commands =
   jade: (job, next) ->
+    locals = job.locals or {}
+
     if job.input
-      jade.render(job.input, next)
+      jade.render(job.input, locals, next)
     else if job.file
-      jade.renderFile(job.file, next)
+      jade.renderFile(job.file, locals, next)
     else
       next(new Error 'jade command must specify input or file')
   stylus: (job, next) ->
+    locals = job.locals or {}
+    apply-locals = (styl) ->
+      for k, v of locals
+        styl.define(k, v)
+
     if job.input
-      stylus.render(job.input, next)
+      styl = stylus(job.input)
+      apply-locals(styl)
+      styl.render(next)
     else if job.file
-      stylus.render(fs.read-file-sync(job.file).to-string!, next)
+      input = fs.read-file-sync(job.file).to-string!
+      styl = stylus(input)
+      apply-locals(styl)
+      styl.render(next)
     else
       next(new Error 'stylus command must specify input or file')
 
