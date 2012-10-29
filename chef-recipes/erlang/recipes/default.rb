@@ -20,3 +20,19 @@ unless File.file? '/usr/local/bin/erl'
   end
 end
 
+unless File.file? '/usr/local/bin/rebar'
+  package 'git'
+  
+  bash "installing rebar" do
+    cwd '/tmp'
+    code <<-EOH
+      set -e
+
+      git clone git://github.com/basho/rebar.git
+      cd rebar
+      ./bootstrap
+      cp rebar /usr/local/bin
+    EOH
+  end
+end
+
